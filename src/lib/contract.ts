@@ -8,7 +8,7 @@ declare global {
 }
 
 
-export const CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F';
+export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x0165878A594ca255338adfa4d48449f69242Eb8F';
 
 export function useCreateEvent() {
   const createEvent = async (

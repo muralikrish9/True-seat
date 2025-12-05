@@ -21,7 +21,12 @@ const config: HardhatUserConfig = {
       url: "http://127.0.0.1:8545/",
       chainId: 31337,
     },
-    // Add other networks as needed
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL || "https://84532.rpc.thirdweb.com",
+      chainId: 84532,
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: "auto",
+    },
   },
   paths: {
     sources: "./contracts",

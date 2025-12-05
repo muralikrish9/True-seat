@@ -1,6 +1,6 @@
 'use client';
 
-import { formatEther } from 'ethers';
+// Removed formatEther - using SOL now
 import { BuyTicketsModal } from './BuyTicketsModal';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
@@ -109,7 +109,7 @@ export function EventPreviewModal({ isOpen, onClose, event, onBuyTicket, isBuyin
               <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                 <p className="text-sm font-medium text-gray-500">Price</p>
                 <p className="mt-1 text-base font-medium text-gray-900">
-                  {event.price ? formatEther(event.price) : '0'} ETH
+                  {event.price ? Number(event.price) / 1e9 : '0'} SOL
                 </p>
               </div>
               <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
@@ -155,7 +155,7 @@ export function EventPreviewModal({ isOpen, onClose, event, onBuyTicket, isBuyin
               <button
                 onClick={handleBuyClick}
                 disabled={isBuying || availableTickets === 0}
-                className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg"
+                className="px-6 py-2.5 bg-[#e50914] text-white rounded-lg hover:bg-[#b8070f] text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg"
               >
                 {isBuying ? 'Processing...' : 'Buy Ticket'}
               </button>
@@ -168,7 +168,7 @@ export function EventPreviewModal({ isOpen, onClose, event, onBuyTicket, isBuyin
         <BuyTicketsModal
           isOpen={isBuyModalOpen}
           onClose={() => setIsBuyModalOpen(false)}
-          ticketPrice={Number(formatEther(event.price))}
+          ticketPrice={Number(event.price) / 1e9}
           eventName={event.name}
           onConfirm={onBuyTicket}
           isLoading={isBuying}

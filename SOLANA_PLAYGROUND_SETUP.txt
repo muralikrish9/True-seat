@@ -1,0 +1,56 @@
+SOLANA PLAYGROUND DEPLOYMENT GUIDE
+===================================
+
+PROGRAM INFO:
+- Program ID: wEeoKNhaFsCPYLsscNUy5PpXxNs81vF6CfEArCxLmmr
+- Deployer Wallet: 61QFkSLNNYnvyBXGT1sekpVMubQogUYEMxhVHoTY63T8
+- Network: Devnet
+
+STEP-BY-STEP:
+
+1. Go to: https://beta.solpg.io/
+
+2. Click "New" → Select "Anchor"
+
+3. In the left sidebar, you'll see:
+   - lib.rs (main program file)
+   - Cargo.toml (dependencies)
+
+4. Replace lib.rs content with the code from: SOLANA_PLAYGROUND_CODE.rs
+
+5. Update Cargo.toml dependencies:
+   [dependencies]
+   anchor-lang = "0.32.1"
+   anchor-spl = "0.32.1"
+
+6. IMPORTANT: Update the declare_id! in lib.rs to:
+   declare_id!("wEeoKNhaFsCPYLsscNUy5PpXxNs81vF6CfEArCxLmmr");
+
+7. Click "Build" button (top right)
+   - Wait for compilation to complete
+   - Should see "Build successful"
+
+8. Click "Deploy" button
+   - Select "Devnet" network
+   - Connect your wallet (Phantom)
+   - Or import the deployer keypair:
+     * Click "Import Wallet"
+     * Use the keypair from: event-tickets/target/deploy/event_tickets-keypair.json
+     * Or use deployer wallet: 61QFkSLNNYnvyBXGT1sekpVMubQogUYEMxhVHoTY63T8
+
+9. After deployment:
+   - Copy the program ID (should be: wEeoKNhaFsCPYLsscNUy5PpXxNs81vF6CfEArCxLmmr)
+   - Verify on explorer: https://explorer.solana.com/address/wEeoKNhaFsCPYLsscNUy5PpXxNs81vF6CfEArCxLmmr?cluster=devnet
+
+10. Your frontend is already configured!
+    - Program ID is set in .env.local
+    - Just restart: npm run dev
+
+ALTERNATIVE: Use Solana Playground's CLI
+- Install: npm install -g @solana-playground/cli
+- Then: solpg build && solpg deploy
+
+TROUBLESHOOTING:
+- If build fails: Check Anchor version matches (0.32.1)
+- If deploy fails: Make sure wallet has SOL (you have 5 SOL ✅)
+- If program ID differs: Update .env.local with new ID

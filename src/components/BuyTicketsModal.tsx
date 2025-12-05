@@ -35,7 +35,7 @@ export function BuyTicketsModal({ isOpen, onClose, ticketPrice, eventName, onCon
         <div className="space-y-4">
           <div>
             <h3 className="text-lg font-medium text-gray-900">{eventName}</h3>
-            <p className="text-sm text-gray-500">Price per ticket: {ticketPrice} ETH</p>
+            <p className="text-sm text-gray-500">Price per ticket: {ticketPrice} SOL</p>
           </div>
 
           <div>
@@ -45,13 +45,13 @@ export function BuyTicketsModal({ isOpen, onClose, ticketPrice, eventName, onCon
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-3 py-2"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#ffe5e7]0 focus:ring-[#ffe5e7]0 text-gray-900 px-3 py-2"
             />
           </div>
 
           <div className="pt-4 border-t">
             <p className="text-lg font-medium text-gray-900">
-              Total: {totalPrice.toFixed(4)} ETH
+              Total: {totalPrice.toFixed(4)} SOL
             </p>
           </div>
         </div>
@@ -66,7 +66,7 @@ export function BuyTicketsModal({ isOpen, onClose, ticketPrice, eventName, onCon
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[#e50914] text-white rounded-md hover:bg-[#b8070f] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Processing...' : 'Confirm Purchase'}
           </button>

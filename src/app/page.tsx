@@ -10,20 +10,20 @@ export default function Home() {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#ffe5e7] via-white to-[#ffe5e7]">
         {/* Decorative shapes */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 0.1, scale: 1 }}
             transition={{ duration: 1 }}
-            className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-600 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-80 h-80 bg-[#e50914] rounded-full blur-3xl"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 0.1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-600 rounded-full blur-3xl"
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#e50914] rounded-full blur-3xl"
           />
         </div>
 
@@ -41,8 +41,8 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="mb-8"
               >
-                <h1 className="font-space-grotesk text-6xl md:text-7xl font-bold text-indigo-600 mb-4 tracking-tight">
-                  Block-A-Tick
+                <h1 className="font-space-grotesk text-6xl md:text-7xl font-bold text-[#e50914] mb-4 tracking-tight">
+                  True Seat
                 </h1>
                 <p className="text-xl text-gray-600 font-medium">
                   The Future of Event Ticketing
@@ -71,13 +71,13 @@ export default function Home() {
               >
                 <Link 
                   href="/events" 
-                  className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-indigo-700 transition-colors font-space-grotesk shadow-lg hover:shadow-xl"
+                  className="inline-block bg-[#e50914] text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-[#b8070f] transition-colors font-space-grotesk shadow-lg hover:shadow-xl"
                 >
                   Explore Events
                 </Link>
                 <Link 
                   href="/about" 
-                  className="inline-block bg-white text-indigo-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors font-space-grotesk border-2 border-indigo-600"
+                  className="inline-block bg-white text-[#e50914] px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors font-space-grotesk border-2 border-[#e50914]"
                 >
                   Learn More
                 </Link>
@@ -111,7 +111,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Block-A-Tick?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose True Seat?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Experience the benefits of blockchain-powered ticketing
             </p>
@@ -127,8 +127,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 group"
               >
-                <div className="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors">
-                  <div className="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors">
+                <div className="w-14 h-14 bg-[#ffccce] rounded-lg flex items-center justify-center mb-6 group-hover:bg-[#e50914] transition-colors">
+                  <div className="w-6 h-6 text-[#e50914] group-hover:text-white transition-colors">
                     {feature.icon}
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
+      <section className="py-24 bg-gradient-to-br from-[#ffe5e7] via-white to-[#ffe5e7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -166,7 +166,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="text-center group"
               >
-                <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-indigo-700 transition-colors shadow-lg">
+                <div className="w-16 h-16 bg-[#e50914] text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-[#b8070f] transition-colors shadow-lg">
                   {index + 1}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{step.title}</h3>
@@ -211,10 +211,10 @@ export default function Home() {
                   <p className="text-gray-600 mb-4">{event.date}</p>
                   <p className="text-gray-600 mb-4">{event.location}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-indigo-600 font-medium">{event.price} ETH</span>
+                    <span className="text-[#e50914] font-medium">{event.price} ETH</span>
                     <Link 
                       href="/events" 
-                      className="text-indigo-600 hover:text-indigo-700 font-medium group-hover:translate-x-1 transition-transform"
+                      className="text-[#e50914] hover:text-[#b8070f] font-medium group-hover:translate-x-1 transition-transform"
                     >
                       View Details →
                     </Link>
@@ -227,7 +227,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
+      <section className="py-24 bg-gradient-to-br from-[#ffe5e7] via-white to-[#ffe5e7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -247,13 +247,13 @@ export default function Home() {
             >
               <Link 
                 href="/events" 
-                className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-indigo-700 transition-colors font-space-grotesk shadow-lg hover:shadow-xl"
+                className="inline-block bg-[#e50914] text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-[#b8070f] transition-colors font-space-grotesk shadow-lg hover:shadow-xl"
               >
                 Start Exploring
               </Link>
               <Link 
                 href="/contact" 
-                className="inline-block bg-white text-indigo-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors font-space-grotesk border-2 border-indigo-600"
+                className="inline-block bg-white text-[#e50914] px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors font-space-grotesk border-2 border-[#e50914]"
               >
                 Contact Us
               </Link>
@@ -298,7 +298,7 @@ const features = [
 const steps = [
   {
     title: 'Connect Wallet',
-    description: 'Connect your Web3 wallet to get started with Block-A-Tick.',
+    description: 'Connect your Web3 wallet to get started with True Seat.',
   },
   {
     title: 'Create Event',

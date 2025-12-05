@@ -8,7 +8,7 @@ import { ChatBot } from '@/components/ChatBot';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Block-A-Tick - Decentralized Event Ticketing",
+  title: "True Seat - Decentralized Event Ticketing",
   description: "A blockchain-based platform for event ticketing",
 };
 
@@ -18,10 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <Providers>
-          <div className="min-h-screen bg-gray-100">
+          <div className="min-h-screen bg-gray-100" suppressHydrationWarning>
             {children}
           </div>
         </Providers>

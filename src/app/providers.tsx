@@ -1,94 +1,42 @@
 'use client';
 
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { createConfig, WagmiProvider } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
-import { http } from 'wagmi';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { clusterApiUrl } from '@solana/web3.js';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@rainbow-me/rainbowkit/styles.css';
+import { useMemo } from 'react';
+import '@solana/wallet-adapter-react-ui/styles.css';
 
-// Get your project ID from https://cloud.walletconnect.com/
-// This is required for WalletConnect integration
-const projectId = 'YOUR_PROJECT_ID';
 const queryClient = new QueryClient();
 
-const { connectors } = getDefaultWallets({
-  appName: 'Block-A-Tick',
-  projectId,
-});
-
-// Create a function to get the current chain configuration
-const getChainConfig = () => {
-  // Get the current chain ID from MetaMask
-  const chainId = typeof window !== 'undefined' 
-    ? parseInt(window.ethereum?.networkVersion || '1')
-    : 1;
-
-  // Create a custom chain configuration for local networks
-  if (chainId === 31337) { // Hardhat local network
-    return {
-      id: 31337,
-      name: 'Localhost',
-      network: 'localhost',
-      nativeCurrency: {
-        name: 'Ether',
-        symbol: 'ETH',
-        decimals: 18,
-      },
-      rpcUrls: {
-        default: { http: ['http://127.0.0.1:8545'] },
-      },
-      blockExplorers: {
-        default: { name: 'Local', url: '' },
-      },
-      testnet: true,
-    };
-  }
-
-  // Return the appropriate chain configuration
-  switch (chainId) {
-    case 1:
-      return mainnet;
-    case 11155111:
-      return sepolia;
-    default:
-      // For any other network, create a custom configuration
-      return {
-        id: chainId,
-        name: `Chain ${chainId}`,
-        network: `chain-${chainId}`,
-        nativeCurrency: {
-          name: 'Ether',
-          symbol: 'ETH',
-          decimals: 18,
-        },
-        rpcUrls: {
-          default: { http: [`https://rpc.ankr.com/eth/${chainId}`] },
-        },
-        blockExplorers: {
-          default: { name: 'Unknown', url: '' },
-        },
-        testnet: chainId !== 1,
-      };
-  }
-};
-
-const config = createConfig({
-  chains: [getChainConfig()],
-  transports: {
-    [getChainConfig().id]: http(),
-  },
-  connectors,
-});
+// Get network from environment or default to devnet
+const network = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as WalletAdapterNetwork) || WalletAdapterNetwork.Devnet;
+const rpcUrl = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl(network);
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  // Configure wallets
+  // Note: Phantom uses Standard Wallet API and is auto-detected
+  // We can optionally remove PhantomWalletAdapter, but keeping it for compatibility
+  const wallets = useMemo(
+    () => [
+      // Phantom is auto-detected via Standard Wallet API, but we keep it for explicit control
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+    ],
+    []
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={config}>
-        <RainbowKitProvider>
-          {children}
-        </RainbowKitProvider>
-      </WagmiProvider>
+      <ConnectionProvider endpoint={rpcUrl}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            {children}
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
     </QueryClientProvider>
   );
-} 
+}

@@ -3,10 +3,9 @@
 import { Navigation } from '@/components/Navigation';
 import { CreateEventModal } from '@/components/CreateEventModal';
 import { BuyTicketsModal } from '@/components/BuyTicketsModal';
-import { useAccount } from 'wagmi';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useState, useEffect } from 'react';
-import { useGetEvents, useBuyTicket } from '@/lib/contract';
-import { formatEther } from 'ethers';
+import { useGetEvents, useBuyTicket } from '@/lib/solana';
 import { toast } from 'react-hot-toast';
 import { EventPreviewModal } from '@/components/EventPreviewModal';
 import Image from 'next/image';
@@ -28,7 +27,7 @@ interface Event {
 }
 
 export default function Events() {
-  const { isConnected } = useAccount();
+  const { connected } = useWallet();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
@@ -86,10 +85,10 @@ export default function Events() {
 
   // Fetch events only when the page is first visited
   useEffect(() => {
-    if (isConnected) {
+    if (connected) {
       fetchEvents();
     }
-  }, [isConnected]); // Only run when isConnected changes
+  }, [connected]); // Only run when connected changes
 
   useEffect(() => {
     const loadEventImages = async () => {
@@ -134,7 +133,9 @@ export default function Events() {
     }
     
     try {
-      const totalPrice = Number(formatEther(selectedEvent.price)) * quantity;
+      // Convert from lamports (1e9) to SOL
+      const priceInSol = Number(selectedEvent.price) / 1e9;
+      const totalPrice = priceInSol * quantity;
       console.log("Buying ticket:", {
         eventId: selectedEvent.id,
         totalPrice,
@@ -142,7 +143,9 @@ export default function Events() {
         eventData: selectedEvent
       });
       
-      await buyTicket(selectedEvent.id, totalPrice, quantity);
+      // Use event PDA (stored in event.pda or use id as fallback)
+      const eventPDA = (selectedEvent as any).pda || selectedEvent.id;
+      await buyTicket(eventPDA, priceInSol, quantity);
       toast.success('Ticket purchased successfully!');
       setIsBuyModalOpen(false);
       setSelectedEvent(null);
@@ -160,14 +163,14 @@ export default function Events() {
     await fetchEvents(); // Refresh events after creating a new one
   };
 
-  if (!isConnected) {
+  if (!connected) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <Navigation />
         <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-20 h-20 bg-[#ffccce] rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#e50914]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
@@ -194,7 +197,7 @@ export default function Events() {
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="mt-6 md:mt-0 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md hover:shadow-lg flex items-center space-x-2 group"
+            className="mt-6 md:mt-0 px-6 py-3 bg-gradient-to-r from-[#e50914] to-[#b8070f] text-white rounded-xl hover:from-[#b8070f] hover:to-[#8a0509] transition-all shadow-md hover:shadow-lg flex items-center space-x-2 group"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:rotate-90 transition-transform" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -205,7 +208,7 @@ export default function Events() {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e50914]"></div>
             <p className="mt-4 text-gray-600">Loading events...</p>
           </div>
         ) : error ? (
@@ -227,15 +230,15 @@ export default function Events() {
                   <h2 className="text-2xl font-bold text-gray-900">Upcoming Events</h2>
                   <p className="text-gray-600 mt-1">Don't miss out on these exciting events</p>
                 </div>
-                <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">
+                <span className="px-4 py-2 bg-[#ffe5e7] text-[#b8070f] rounded-full text-sm font-medium">
                   {upcomingEvents.length} events
                 </span>
               </div>
               <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {upcomingEvents.length === 0 ? (
                   <div className="col-span-full bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
-                    <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="w-16 h-16 bg-[#ffe5e7] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#e50914]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
@@ -243,7 +246,7 @@ export default function Events() {
                     <p className="text-gray-500 mb-4">Be the first to create an event and start selling tickets!</p>
                     <button
                       onClick={() => setIsCreateModalOpen(true)}
-                      className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                      className="inline-flex items-center px-4 py-2 bg-[#e50914] text-white rounded-lg hover:bg-[#b8070f] transition-colors"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -276,27 +279,27 @@ export default function Events() {
                       <div className="p-6">
                         <div className="space-y-3 mb-6">
                           <div className="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ffe5e7]0" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                             </svg>
                             {event.location}
                           </div>
                           <div className="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ffe5e7]0" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                             </svg>
                             {new Date(Number(event.eventDate) * 1000).toLocaleDateString()}
                           </div>
                           <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center text-gray-500">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ffe5e7]0" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
                                 <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
                               </svg>
                               {Number(event.maxTickets - event.ticketsSold)} tickets left
                             </div>
-                            <div className="font-medium text-indigo-600">
-                              {formatEther(event.price)} ETH
+                            <div className="font-medium text-[#e50914]">
+                              {Number(event.price) / 1e9} SOL
                             </div>
                           </div>
                         </div>
@@ -311,7 +314,7 @@ export default function Events() {
                           <button 
                             onClick={() => handleBuyClick(event)}
                             disabled={isBuying || Number(event.maxTickets - event.ticketsSold) === 0}
-                            className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-2.5 px-4 rounded-xl hover:from-indigo-700 hover:to-indigo-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm hover:shadow-md"
+                            className="flex-1 bg-gradient-to-r from-[#e50914] to-[#b8070f] text-white py-2.5 px-4 rounded-xl hover:from-[#b8070f] hover:to-[#8a0509] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm hover:shadow-md"
                           >
                             {isBuying ? 'Processing...' : 'Buy Ticket'}
                           </button>
@@ -373,27 +376,27 @@ export default function Events() {
                       <div className="p-6">
                         <div className="space-y-3 mb-6">
                           <div className="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ffe5e7]0" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                             </svg>
                             {event.location}
                           </div>
                           <div className="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ffe5e7]0" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                             </svg>
                             {new Date(Number(event.eventDate) * 1000).toLocaleDateString()}
                           </div>
                           <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center text-gray-500">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#ffe5e7]0" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
                                 <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
                               </svg>
                               {Number(event.maxTickets)} total tickets
                             </div>
-                            <div className="font-medium text-indigo-600">
-                              {formatEther(event.price)} ETH
+                            <div className="font-medium text-[#e50914]">
+                              {Number(event.price) / 1e9} SOL
                             </div>
                           </div>
                         </div>
@@ -436,7 +439,7 @@ export default function Events() {
               setIsBuyModalOpen(false);
               setSelectedEvent(null);
             }}
-            ticketPrice={Number(formatEther(selectedEvent.price))}
+            ticketPrice={Number(selectedEvent.price) / 1e9}
             eventName={selectedEvent.name}
             onConfirm={handleBuyTicket}
             isLoading={isBuying}

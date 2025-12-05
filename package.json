@@ -1,18 +1,27 @@
 {
-  "name": "block-a-tick",
+  "name": "trueseat",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "create-events": "tsx scripts/create-example-events.ts"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
     "@google/generative-ai": "^0.24.0",
     "@hookform/resolvers": "^4.1.3",
     "@rainbow-me/rainbowkit": "^2.2.4",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "^1.98.4",
     "@tanstack/react-query": "^5.70.0",
+    "bs58": "^6.0.0",
     "ethers": "^6.11.1",
     "framer-motion": "^12.6.2",
     "next": "15.2.4",
@@ -28,13 +37,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "hardhat": "^2.22.19",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

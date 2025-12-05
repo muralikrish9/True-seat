@@ -2,10 +2,9 @@
 
 import { Navigation } from '@/components/Navigation';
 import { ViewTicketModal } from '@/components/ViewTicketModal';
-import { useAccount } from 'wagmi';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useState, useEffect } from 'react';
-import { useGetTicketsByAddress } from '@/lib/contract';
-import { formatEther } from 'ethers';
+import { useGetTicketsByAddress } from '@/lib/solana';
 import { toast } from 'react-hot-toast';
 
 interface TicketInfo {
@@ -20,7 +19,8 @@ interface TicketInfo {
 }
 
 export default function OwnedTickets() {
-  const { isConnected, address } = useAccount();
+  const { connected, publicKey } = useWallet();
+  const address = publicKey?.toBase58();
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<TicketInfo | null>(null);
   const [tickets, setTickets] = useState<TicketInfo[]>([]);
@@ -42,17 +42,17 @@ export default function OwnedTickets() {
       }
     };
 
-    if (isConnected && address) {
+    if (connected && address) {
       fetchTickets();
     }
-  }, [isConnected, address, getTicketsByAddress]);
+  }, [connected, address, getTicketsByAddress]);
 
   const handleViewClick = (ticket: TicketInfo) => {
     setSelectedTicket(ticket);
     setIsViewModalOpen(true);
   };
 
-  if (!isConnected) {
+  if (!connected) {
     return (
       <main>
         <Navigation />
@@ -101,14 +101,14 @@ export default function OwnedTickets() {
                     Status: {ticket.isActive ? 'Active' : 'Inactive'}
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
-                    Price: {formatEther(ticket.price)} ETH
+                    Price: {Number(ticket.price) / 1e9} SOL
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
                     Tickets Sold: {Number(ticket.ticketsSold)} / {Number(ticket.maxTickets)}
                   </p>
                   <button 
                     onClick={() => handleViewClick(ticket)}
-                    className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+                    className="mt-4 w-full bg-[#e50914] text-white py-2 px-4 rounded-md hover:bg-[#b8070f]"
                   >
                     View Details
                   </button>
